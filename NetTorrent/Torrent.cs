@@ -21,6 +21,7 @@ namespace NetTorrent
         {
             string bencode = await FileIO.ReadTextAsync(torrentFile);
             Debug.WriteLine(bencode);
+            Debug.WriteLine("hello wror");
         }
     }
 }
