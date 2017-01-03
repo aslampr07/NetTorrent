@@ -27,9 +27,6 @@ namespace NetTorrent
             announce.Add("http://www.google.com");
             announce.Add("https://bing.com");
             test.Add("announces", announce);
-            object hel;
-            test.TryGetValue("announce", out hel);
-            Debug.WriteLine(hel.GetType());
         }
     }
 }
