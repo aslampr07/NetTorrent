@@ -21,12 +21,6 @@ namespace NetTorrent
         {
             string bencode = await FileIO.ReadTextAsync(torrentFile);
             Debug.WriteLine(bencode);
-            Dictionary<string, object> test = new Dictionary<string, object>();
-            test.Add("Announce",1234);
-            List<string> announce = new List<string>();
-            announce.Add("http://www.google.com");
-            announce.Add("https://bing.com");
-            test.Add("announces", announce);
         }
     }
 }
