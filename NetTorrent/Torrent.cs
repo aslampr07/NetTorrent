@@ -20,8 +20,7 @@ namespace NetTorrent
         private async void parseBencode(StorageFile torrentFile)
         {
             string bencode = await FileIO.ReadTextAsync(torrentFile);
-            Debug.WriteLine(bencode);
-            Debug.WriteLine("hello wror");
+            metainfo metaInfo = new metainfo(bencode);
         }
     }
 }
