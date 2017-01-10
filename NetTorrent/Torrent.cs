@@ -15,12 +15,7 @@ namespace NetTorrent
         /// <param name="torrentfile">The torrent file as a StorageFile objecct</param>
         public Torrent(StorageFile torrentFile)
         {
-            parseBencode(torrentFile);
-        }
-        private async void parseBencode(StorageFile torrentFile)
-        {
-            string bencode = await FileIO.ReadTextAsync(torrentFile);
-            metainfo metaInfo = new metainfo(bencode);
+            
         }
     }
 }
