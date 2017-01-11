@@ -38,8 +38,7 @@ namespace TorrentClient
             StorageFile torrentFile = await picker.PickSingleFileAsync();
             if (torrentFile != null)
             {
-                Torrent newTorrent = new Torrent();
-                newTorrent.create(torrentFile);
+                TorrentData torrentData = new TorrentData(torrentFile);
             }
         }
     }
