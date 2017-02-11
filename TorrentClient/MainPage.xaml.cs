@@ -16,6 +16,7 @@ using NetTorrent;
 using Windows.Storage.Pickers;
 using Windows.Storage;
 using System.Diagnostics;
+using System.Text;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -36,9 +37,21 @@ namespace TorrentClient
             FileOpenPicker picker = new FileOpenPicker();
             picker.FileTypeFilter.Add(".torrent");
             StorageFile torrentFile = await picker.PickSingleFileAsync();
+
             if (torrentFile != null)
-            {
-                TorrentData torrentData = new TorrentData(torrentFile);
+            {       
+                //For transfering the torrentfile to text and bytes for easy reading
+                byte[] torrentByte;
+                using (Stream stream = await torrentFile.OpenStreamForReadAsync())
+                {
+                    using (var memorystream = new MemoryStream())
+                    {
+                        stream.CopyTo(memorystream);
+                        torrentByte = memorystream.ToArray();
+                    }
+                }
+
+                MetaInfo torrentInfo = Bencode.DeserializeBencode<MetaInfo>(torrentByte);
             }
         }
     }
