@@ -9,6 +9,6 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Button x:Name="OpenFile" Content="Open" Margin="10,68,0,260" Click="OpenFile_Click"></Button>
-        <TextBlock Margin="235,153,262,174" FontSize="24">Hello World</TextBlock>
+        <TextBlock Margin="235,153,262,174" FontSize="24">NetTorrent</TextBlock>
     </Grid>
 </Page>

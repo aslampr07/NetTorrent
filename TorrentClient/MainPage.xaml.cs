@@ -51,7 +51,9 @@ namespace TorrentClient
                     }
                 }
 
-                MetaInfo torrentInfo = Bencode.DeserializeBencode<MetaInfo>(torrentByte);
+                Bencode x = new Bencode();
+                string metaString = Encoding.UTF8.GetString(torrentByte);
+                x.DeserializeBencode(metaString);
             }
         }
     }

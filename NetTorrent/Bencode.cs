@@ -16,27 +16,45 @@ namespace NetTorrent
     /// </summary>
     public class Bencode
     {
-        /// <summary>
-        /// Deserialize the Benocoded dictionary to objects.
-        /// </summary>
-        /// <typeparam name="T">Object of the class or structure to deserialize to.</typeparam>
-        /// <param name="bencodeByte">Byte array of the bencoded.</param>
-        public static T DeserializeBencode<T>(byte[] bencodeByte)
+        public object DeserializeBencode(string bencode)
         {
-            string metaString = Encoding.UTF8.GetString(bencodeByte);
-            return DeserializeBencode<T>(metaString);
-        }
-        /// <summary>
-        /// Deserialze the Bencoded dictionary to objects.
-        /// </summary>
-        /// <typeparam name="T">Object of the class or structure to deserialize to</typeparam>
-        /// <param name="bencodeString">String in UTF-8 encoded</param>
-        public static T DeserializeBencode<T>(string bencodeString)
-        {
-            //For creting an instance of an object of type T
-            T bencodeObject = (T)Activator.CreateInstance(typeof(T));
-            var props = bencodeObject
-            return bencodeObject;
+            if (bencode[0] != '\0')
+            {
+                if (bencode[0] == 'l')
+                {
+                    List<object> lt = new List<object>();
+                    while (true)
+                    {
+                        lt.Add(DeserializeBencode(bencode));
+                    }
+                }
+                if(bencode[0] == 'd')
+                {
+                    Dictionary<string, object> dy = new Dictionary<string, object>();
+                    while (true)
+                    {
+
+                    }
+                }
+                if (bencode[0] == 'i')
+                {
+                    return 0;
+                }
+                //If the current instance is a string
+                if(char.IsDigit(bencode[0]))
+                {
+                    int i = 0;
+                    int length = 0;
+                    while (char.IsDigit(bencode[i]))
+                    {
+                        length = (length * 10) + int.Parse(bencode[i].ToString());
+                        i++;
+                    }
+                    string s = bencode.Substring(i + 1, length);
+                    return s;
+                }
+            }
+            return null;
         }
 
     }

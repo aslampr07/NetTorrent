@@ -108,7 +108,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bencode.cs" />
-    <Compile Include="MetaInfo.cs" />
     <Compile Include="Torrent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\NetTorrent.rd.xml" />
