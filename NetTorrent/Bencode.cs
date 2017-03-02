@@ -16,46 +16,60 @@ namespace NetTorrent
     /// </summary>
     public class Bencode
     {
-        public object DeserializeBencode(string bencode)
+
+        int stringPointer = 0;  // Should not have to do this, but i had no other way, I hate global variable
+                                //It is cheating to use global variable for recursion :-(
+        public dynamic DeserializeBencode(string bencode)
         {
-            if (bencode[0] != '\0')
+            if (bencode[stringPointer] == 'l')
             {
-                if (bencode[0] == 'l')
+                stringPointer++;
+                List<object> lt = new List<object>();
+                while (bencode[stringPointer] != 'e')
                 {
-                    List<object> lt = new List<object>();
-                    while (true)
-                    {
-                        lt.Add(DeserializeBencode(bencode));
-                    }
+                    lt.Add(DeserializeBencode(bencode));
                 }
-                if(bencode[0] == 'd')
-                {
-                    Dictionary<string, object> dy = new Dictionary<string, object>();
-                    while (true)
-                    {
-
-                    }
-                }
-                if (bencode[0] == 'i')
-                {
-                    return 0;
-                }
-                //If the current instance is a string
-                if(char.IsDigit(bencode[0]))
-                {
-                    int i = 0;
-                    int length = 0;
-                    while (char.IsDigit(bencode[i]))
-                    {
-                        length = (length * 10) + int.Parse(bencode[i].ToString());
-                        i++;
-                    }
-                    string s = bencode.Substring(i + 1, length);
-                    return s;
-                }
+                stringPointer++;
+                return lt;
             }
-            return null;
+            if (bencode[stringPointer] == 'd')
+            {
+                stringPointer++;
+                Dictionary<string, object> dy = new Dictionary<string, object>();
+                while (bencode[stringPointer] != 'e')
+                {
+                    string key = (string)DeserializeBencode(bencode);
+                    dy.Add(key, DeserializeBencode(bencode));
+                }
+                stringPointer++;
+                return dy;
+            }
+            if (bencode[stringPointer] == 'i')
+            {
+                stringPointer++;
+                int num = 0;
+                while (bencode[stringPointer] != 'e')
+                {
+                    num = (num * 10) + int.Parse(bencode[stringPointer].ToString());
+                    stringPointer++;
+                }
+                stringPointer++;
+                return num;
+            }
+            //If the current instance is a string
+            if (char.IsDigit(bencode[stringPointer]))
+            {
+                int length = 0;
+                while (char.IsDigit(bencode[stringPointer]))
+                {
+                    length = (length * 10) + int.Parse(bencode[stringPointer].ToString());
+                    stringPointer++;
+                }
+                string s = bencode.Substring(stringPointer + 1, length);
+                stringPointer = stringPointer + s.Length + 1;
+                return s;
+            }
+            return 0;
         }
-
     }
 }
