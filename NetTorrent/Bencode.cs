@@ -21,29 +21,37 @@ namespace NetTorrent
                                 //It is cheating to use global variable for recursion :-(
         public dynamic DeserializeBencode(string bencode)
         {
+            stringPointer = 0;              //Somebody fix this shit
+            return recursiveDeserialize(bencode);
+        }
+        private dynamic recursiveDeserialize(string bencode)
+        {
+            //if the current instance is a list
             if (bencode[stringPointer] == 'l')
             {
                 stringPointer++;
                 List<object> lt = new List<object>();
                 while (bencode[stringPointer] != 'e')
                 {
-                    lt.Add(DeserializeBencode(bencode));
+                    lt.Add(recursiveDeserialize(bencode));
                 }
                 stringPointer++;
                 return lt;
             }
+            //if the current instance is a dictionary
             if (bencode[stringPointer] == 'd')
             {
                 stringPointer++;
                 Dictionary<string, object> dy = new Dictionary<string, object>();
                 while (bencode[stringPointer] != 'e')
                 {
-                    string key = (string)DeserializeBencode(bencode);
-                    dy.Add(key, DeserializeBencode(bencode));
+                    string key = (string)recursiveDeserialize(bencode);
+                    dy.Add(key, recursiveDeserialize(bencode));
                 }
                 stringPointer++;
                 return dy;
             }
+            //if the current instance is a integer
             if (bencode[stringPointer] == 'i')
             {
                 stringPointer++;
@@ -69,7 +77,8 @@ namespace NetTorrent
                 stringPointer = stringPointer + s.Length + 1;
                 return s;
             }
-            return 0;
+            //code may not reaches here. but it may reach if the bencode is not valid. I haven't checked it
+            return null;
         }
     }
 }

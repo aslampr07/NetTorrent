@@ -8,7 +8,7 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Button x:Name="OpenFile" Content="Open" Margin="10,68,0,260" Click="OpenFile_Click"></Button>
-        <TextBlock Margin="235,153,262,174" FontSize="24">NetTorrent</TextBlock>
+        <Button x:Name="OpenFile" Content="New Torrent" Margin="10,68,0,260" Click="OpenFile_Click"></Button>
+        <TextBlock x:Name="MessageBox" Margin="235,153,50,10" FontSize="11"></TextBlock>
     </Grid>
 </Page>

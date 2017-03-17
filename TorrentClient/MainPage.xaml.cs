@@ -40,7 +40,7 @@ namespace TorrentClient
 
             if (torrentFile != null)
             {       
-                //For transfering the torrentfile to text and bytes for easy reading
+                //For transfering the torrentfile to string
                 byte[] torrentByte;
                 using (Stream stream = await torrentFile.OpenStreamForReadAsync())
                 {
@@ -51,9 +51,14 @@ namespace TorrentClient
                     }
                 }
 
-                Bencode x = new Bencode();
+                Bencode meta = new Bencode();
                 string metaString = Encoding.ASCII.GetString(torrentByte);
-                dynamic y = x.DeserializeBencode(metaString);
+                dynamic metaValues = meta.DeserializeBencode(metaString);
+                Torrent myTorrent = new Torrent(metaValues);
+                foreach (Uri item in myTorrent.Announce)
+                {
+                    Debug.WriteLine(item.AbsoluteUri);
+                }
             }
         }
     }
