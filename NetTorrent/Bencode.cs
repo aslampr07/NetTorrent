@@ -12,7 +12,7 @@ using System.Reflection;
 namespace NetTorrent
 {
     /// <summary>
-    /// Allows Serializing and Deserializing bencode and objects
+    /// Allows Serializing and Deserializing bencode and objects.
     /// </summary>
     public class Bencode
     {
@@ -21,7 +21,7 @@ namespace NetTorrent
                                 //It is cheating to use global variable for recursion :-(
         public dynamic DeserializeBencode(string bencode)
         {
-            stringPointer = 0;              //Somebody fix this shit
+            stringPointer = 0;              //Somebody fix this shit.
             return recursiveDeserialize(bencode);
         }
         private dynamic recursiveDeserialize(string bencode)
@@ -55,7 +55,7 @@ namespace NetTorrent
             if (bencode[stringPointer] == 'i')
             {
                 stringPointer++;
-                int num = 0;
+                long num = 0;
                 while (bencode[stringPointer] != 'e')
                 {
                     num = (num * 10) + int.Parse(bencode[stringPointer].ToString());
@@ -77,7 +77,7 @@ namespace NetTorrent
                 stringPointer = stringPointer + s.Length + 1;
                 return s;
             }
-            //code may not reaches here. but it may reach if the bencode is not valid. I haven't checked it
+            //When there is an error in the bencode it may return null.
             return null;
         }
     }

@@ -17,6 +17,7 @@ using Windows.Storage.Pickers;
 using Windows.Storage;
 using System.Diagnostics;
 using System.Text;
+using Windows.UI.Popups;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -39,8 +40,8 @@ namespace TorrentClient
             StorageFile torrentFile = await picker.PickSingleFileAsync();
 
             if (torrentFile != null)
-            {       
-                //For transfering the torrentfile to string
+            {
+                //For converting the torrentfile to string
                 byte[] torrentByte;
                 using (Stream stream = await torrentFile.OpenStreamForReadAsync())
                 {
@@ -53,12 +54,11 @@ namespace TorrentClient
 
                 Bencode meta = new Bencode();
                 string metaString = Encoding.ASCII.GetString(torrentByte);
+
                 dynamic metaValues = meta.DeserializeBencode(metaString);
                 Torrent myTorrent = new Torrent(metaValues);
-                foreach (Uri item in myTorrent.Announce)
-                {
-                    Debug.WriteLine(item.AbsoluteUri);
-                }
+
+                MessageBox.Text = myTorrent.Info.Length.ToString();
             }
         }
     }
