@@ -1,10 +1,5 @@
-﻿using System.Diagnostics;
-using Windows.Storage;
-using System;
-using System.Text;
+﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.IO;
 
 namespace NetTorrent
 {
@@ -13,17 +8,43 @@ namespace NetTorrent
     /// </summary>
     public class Torrent
     {
-        //Creating field of a Structure for storing the info dictionary.
-        private InfoStruct info;
-
+        private List<fileStruct> fileList = new List<fileStruct>();
         //For storing the metadata of the torrent dictionary.
+        /// <summary>
+        /// Get or set list of Announce URLs.
+        /// </summary>
         public List<Uri> Announces { get; set; } = new List<Uri>();
-        public string CreatedBy { get; set; }
-        public long CreationDate { get; set; }
-        public string Comment { get; set; }
+        /// <summary>
+        /// The Created By Disctiption.
+        /// </summary>
+        public string CreatedBy { get; }
+        /// <summary>
+        /// Time at which the torrent is created. Seconds since 1-Jan-1970 00:00:00 UTC.
+        /// </summary>
+        public long CreationDate { get; }
+        /// <summary>
+        /// Free text from the author of the Torrent.
+        /// </summary>
+        public string Comment { get; }
+        //The info dictionary
+        /// <summary>
+        /// The length of individual pieces in bytes.
+        /// </summary>
+        public long PieceLength { get; }
+        /// <summary>
+        /// Currently broken. Return the concantenated SHA1 hash of file pieces.
+        /// </summary>
+        public string Pieces { get; set; }
+        /// <summary>
+        /// Name of the file if the torrent is in single file mode. Otherwise it is the directory name that store all files.
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// Applicable only in single file mode: Size of the entire file in bytes. If the torrent is Multiple file it will return 0.
+        /// </summary>
+        public long Length { get; set; }
+        public List<fileStruct> Files { get { return fileList; } set { fileList = value; } }
 
-        //Creating a property of info dictionary from the field, autoproperty is not working.
-        public InfoStruct Info { get { return info; } set { info = value; } }
 
         /// <summary>
         /// Initialize the torrent and return properties.
@@ -55,61 +76,72 @@ namespace NetTorrent
                         CreationDate = item.Value;
                         break;
 
+
+                    case "comment":
+                        Comment = item.Value.ToString();
+                        break;
+
                     case "info":
                         foreach (KeyValuePair<string, dynamic> infoDct in item.Value)
                         {
                             switch (infoDct.Key)
                             {
                                 case "pieces":
-                                    info.Pieces = infoDct.Value.ToString();
+                                    Pieces = infoDct.Value.ToString();
                                     break;
 
                                 case "piece length":
-                                    info.PieceLength = infoDct.Value;
+                                    PieceLength = infoDct.Value;
                                     break;
 
                                 case "name":
-                                    info.Name = infoDct.Value;
+                                    Name = infoDct.Value;
                                     break;
 
                                 case "length":
-                                    info.Length = infoDct.Value;
+                                    Length = infoDct.Value;
                                     break;
-                                
-                                
+
+                                case "files":
+                                    foreach (Dictionary<string, dynamic> filesList in infoDct.Value)
+                                    {
+                                        fileStruct fileObj = new fileStruct();
+                                        foreach (KeyValuePair<string, dynamic> itemDict in filesList)
+                                        {
+                                            switch (itemDict.Key)
+                                            {
+                                                case "length":
+                                                    fileObj.Length = itemDict.Value;
+                                                    break;
+                                                case "path":
+                                                    string path = "";
+                                                    foreach (string p in itemDict.Value)
+                                                    {
+                                                        path += "/" + p;
+                                                    }
+                                                    fileObj.Path = new Uri(path, UriKind.Relative);
+                                                    break;
+                                                default: continue;
+                                            }
+                                        }
+                                        Files.Add(fileObj);
+                                    }
+
+                                    break;
 
                                 default: continue;
                             }
                         }
                         break;
 
-                    case "comment":
-                        Comment = item.Value.ToString();
-                        break;
-
-
                     default: continue;
                 }
             }
         }
-        /// <summary>
-        /// For defining the Info dictionary
-        /// </summary>
-        public struct InfoStruct
-        {
-            private ItemStruct items;
-            private List<ItemStruct> itemList;
-
-            public long PieceLength { get; set; }
-            public string Pieces { get; set; }
-            public string Name { get; set; }
-            public long Length { get; set; }
-            public List<ItemStruct> Item { get { return itemList; } set { itemList = value; } }
-        }
-        public struct ItemStruct
+        public struct fileStruct
         {
             public long Length { get; set; }
-            
+            public Uri Path { get; set; }
         }
     }
 }

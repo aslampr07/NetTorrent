@@ -51,14 +51,16 @@ namespace TorrentClient
                         torrentByte = memorystream.ToArray();
                     }
                 }
-
                 Bencode meta = new Bencode();
                 string metaString = Encoding.ASCII.GetString(torrentByte);
 
                 dynamic metaValues = meta.DeserializeBencode(metaString);
-                Torrent myTorrent = new Torrent(metaValues);
 
-                MessageBox.Text = myTorrent.Info.Length.ToString();
+                Torrent myTorrent = new Torrent(metaValues);
+                foreach (Torrent.fileStruct item in myTorrent.Files)
+                {
+                    Debug.WriteLine((item.Length/1024)+"KB\t"+item.Path.OriginalString);
+                }
             }
         }
     }
